@@ -2,6 +2,8 @@ import click
 
 from fluent import sender
 
+from pymongo import MongoClient
+
 from jinja2 import Environment, PackageLoader
 
 
@@ -17,6 +19,21 @@ def template_command(command, params):
     submission_script = template.render(params, job=command_string)
 
     return submission_script
+
+
+@click.command()
+def slurmhist():
+
+    client = MongoClient('mongodb://localhost:27017/')
+
+    db = client.fluentd
+
+    collection = db.test
+
+    result = collection.find()
+
+    for n, doc in enumerate(result):
+        print(n, doc['command'])
 
 
 @click.command()
@@ -39,5 +56,3 @@ def cli(command):
     }
 
     logger.emit('quickrun', message)
-
-    print(submit_script)

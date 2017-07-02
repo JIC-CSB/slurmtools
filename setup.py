@@ -13,8 +13,12 @@ setup(name="slurmtools",
           "click",
           "jinja2",
           "fluent-logger",
+          "pymongo",
       ],
       entry_points={
-          'console_scripts': ['quickrun=slurmtools.cli:cli']
+          'console_scripts': [
+            'quickrun=slurmtools.cli:cli',
+            'slurmhist=slurmtools.cli:slurmhist',
+          ]
       },
       license="MIT")
