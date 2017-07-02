@@ -2,8 +2,8 @@ from setuptools import setup
 
 version = "0.1.0"
 
-setup(name="quickrun",
-      packages=["quickrun"],
+setup(name="slurmtools",
+      packages=["slurmtools"],
       version=version,
       description="Quickly run SLURM jobs",
       author='Matthew Hartley',
@@ -12,8 +12,9 @@ setup(name="quickrun",
           "pyyaml",
           "click",
           "jinja2",
+          "fluent-logger",
       ],
       entry_points={
-          'console_scripts': ['quickrun=quickrun.cli:cli']
+          'console_scripts': ['quickrun=slurmtools.cli:cli']
       },
       license="MIT")
