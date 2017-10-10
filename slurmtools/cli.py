@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 import click
 
 from fluent import sender
@@ -6,6 +9,8 @@ from pymongo import MongoClient
 
 from jinja2 import Environment, PackageLoader
 
+
+SLURMLOGS = os.path.expanduser("~/slurmlogs")
 
 ENV = Environment(loader=PackageLoader('slurmtools', 'templates'),
                   keep_trailing_newline=True)
@@ -36,16 +41,27 @@ def slurmhist():
         print(n, doc['command'])
 
 
+def setup():
+
+    if not os.path.isdir(SLURMLOGS):
+        os.mkdir(SLURMLOGS)
+
+
 @click.command()
+@click.option('--dryrun', '-d', is_flag=True)
 @click.argument('command', nargs=-1)
-def cli(command):
+def cli(command, dryrun):
+
+    setup()
 
     params = {
         "partition": "rg-mh",
-        "jobmem": "2000"
+        "jobmem": "2000",
+        "stdout": "{}/slurm.%N.%j.out".format(SLURMLOGS),
+        "stderr": "{}/slurm.%N.%j.err".format(SLURMLOGS)
     }
 
-    logger = sender.FluentSender('mongo')
+    # logger = sender.FluentSender('mongo')
 
     submit_script = template_command(command, params)
 
@@ -55,4 +71,12 @@ def cli(command):
         'submit_script': submit_script
     }
 
-    logger.emit('quickrun', message)
+    # logger.emit('quickrun', message)
+
+    if dryrun:
+        submit_command = 'cat'
+    else:
+        submit_command = 'sbatch'
+
+    p = subprocess.Popen([submit_command], shell=False, stdin=subprocess.PIPE)
+    out, err = p.communicate(submit_script.encode())

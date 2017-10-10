@@ -1,2 +1,4 @@
 #SBATCH --partition={{ partition }}
 #SBATCH --mem={{ jobmem }}
+#SBATCH -o {{ stdout }}
+#SBATCH -e {{ stderr }}
