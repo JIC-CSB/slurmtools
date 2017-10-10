@@ -8,6 +8,7 @@ setup(name="slurmtools",
       description="Quickly run SLURM jobs",
       author='Matthew Hartley',
       author_email="matthew.hartley@jic.ac.uk",
+      include_package_data=True,
       install_requires=[
           "pyyaml",
           "click",
